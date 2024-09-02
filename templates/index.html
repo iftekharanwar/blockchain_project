@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Interface</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .navbar {
+            background-color: #3498db;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .sidebar {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding-top: 60px;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link {
+            color: #ecf0f1;
+            transition: all 0.3s;
+            border-radius: 5px;
+            margin: 5px 10px;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #3498db;
+            color: #fff;
+        }
+        .card {
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .card-title {
+            color: #2c3e50;
+            font-weight: 600;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        #result {
+            transition: opacity 0.3s ease;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(52, 152, 219, 0.3);
+            border-radius: 50%;
+            border-top-color: #3498db;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .btn-primary {
+            background-color: #3498db;
+            border-color: #3498db;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+        .card-body {
+            padding: 2rem;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #34495e;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+            border-color: #7f8c8d;
+        }
+        .btn-danger {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+        }
+        .btn-danger:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-link me-2"></i>Blockchain Interface</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a class="nav-link active" href="#wallet"><i class="fas fa-wallet me-2"></i>Wallet</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#transaction"><i class="fas fa-exchange-alt me-2"></i>Transaction</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#mining"><i class="fas fa-hammer me-2"></i>Mining</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#blockchain"><i class="fas fa-cubes me-2"></i>Blockchain</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#history"><i class="fas fa-history me-2"></i>History</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#smart-contracts"><i class="fas fa-file-contract me-2"></i>Smart Contracts</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-5">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div id="wallet" class="card">
+                            <div class="card-body">
+                                <h2 class="card-title"><i class="fas fa-wallet me-2"></i>Wallet Operations</h2>
+                                <form id="createWalletForm" class="mb-4">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="Create a new wallet address"><i class="fas fa-plus-circle me-2"></i>Create New Wallet</button>
+                                </form>
+                                <form id="checkBalanceForm">
+                                    <div class="mb-3">
+                                        <label for="balanceAddress" class="form-label">Wallet Address</label>
+                                        <input type="text" class="form-control form-control-lg" id="balanceAddress" placeholder="Enter wallet address" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="Check the balance of the specified wallet"><i class="fas fa-search-dollar me-2"></i>Check Balance</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div id="transaction" class="card">
+                            <div class="card-body">
+                                <h2 class="card-title"><i class="fas fa-exchange-alt me-2"></i>Make Transaction</h2>
+                                <form id="transactionForm">
+                                    <div class="mb-3">
+                                        <label for="sender" class="form-label">Sender's Wallet Address</label>
+                                        <input type="text" class="form-control form-control-lg" id="sender" placeholder="Enter sender's address" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="recipient" class="form-label">Recipient's Wallet Address</label>
+                                        <input type="text" class="form-control form-control-lg" id="recipient" placeholder="Enter recipient's address" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="amount" class="form-label">Amount</label>
+                                        <input type="number" class="form-control form-control-lg" id="amount" placeholder="Enter amount" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="Send a transaction"><i class="fas fa-paper-plane me-2"></i>Send Transaction</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div id="mining" class="card">
+                            <div class="card-body">
+                                <h2 class="card-title"><i class="fas fa-hammer me-2"></i>Mine New Block</h2>
+                                <form id="mineForm">
+                                    <div class="mb-3">
+                                        <label for="minerAddress" class="form-label">Miner's Wallet Address</label>
+                                        <input type="text" class="form-control form-control-lg" id="minerAddress" placeholder="Enter miner's address" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="Mine a new block and add it to the blockchain"><i class="fas fa-plus me-2"></i>Mine Block</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div id="blockchain" class="card">
+                            <div class="card-body">
+                                <h2 class="card-title"><i class="fas fa-cubes me-2"></i>Blockchain Operations</h2>
+                                <div class="d-grid gap-2">
+                                    <button id="viewBlockchain" class="btn btn-primary btn-lg" data-bs-toggle="tooltip" data-bs-placement="top" title="View the entire blockchain"><i class="fas fa-eye me-2"></i>View Blockchain</button>
+                                    <button id="validateBlockchain" class="btn btn-primary btn-lg" data-bs-toggle="tooltip" data-bs-placement="top" title="Validate the integrity of the blockchain"><i class="fas fa-check-circle me-2"></i>Validate Blockchain</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="history" class="card">
+                            <div class="card-body">
+                                <h2 class="card-title"><i class="fas fa-history me-2"></i>Transaction History</h2>
+                                <form id="historyForm">
+                                    <div class="mb-3">
+                                        <label for="historyAddress" class="form-label">Wallet Address</label>
+                                        <input type="text" class="form-control form-control-lg" id="historyAddress" placeholder="Enter wallet address" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="View transaction history for the specified wallet"><i class="fas fa-search me-2"></i>View History</button>
+                                </form>
+                                <div id="historyResult" class="mt-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="smartContracts" class="card">
+                            <div class="card-body">
+                                <h2 class="card-title"><i class="fas fa-file-contract me-2"></i>Smart Contracts</h2>
+                                <form id="createContractForm">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="contractSender" class="form-label">Sender's Address</label>
+                                            <input type="text" class="form-control form-control-lg" id="contractSender" placeholder="Enter sender's address" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="contractRecipient" class="form-label">Recipient's Address</label>
+                                            <input type="text" class="form-control form-control-lg" id="contractRecipient" placeholder="Enter recipient's address" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="contractAmount" class="form-label">Amount</label>
+                                            <input type="number" class="form-control form-control-lg" id="contractAmount" placeholder="Enter amount" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="contractExpiration" class="form-label">Expiration (Unix Timestamp)</label>
+                                            <input type="number" class="form-control form-control-lg" id="contractExpiration" placeholder="Enter expiration as Unix timestamp" required>
+                                        </div>
+                                    </div>
+                                    <div id="conditionsContainer">
+                                        <div class="row condition-row">
+                                            <div class="col-md-10 mb-3">
+                                                <label class="form-label">Condition (Unix Timestamp)</label>
+                                                <input type="number" class="form-control form-control-lg condition-input" placeholder="Enter condition as Unix timestamp" required>
+                                            </div>
+                                            <div class="col-md-2 mb-3 d-flex align-items-end">
+                                                <button type="button" class="btn btn-danger btn-lg remove-condition"><i class="fas fa-minus-circle"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="addCondition" class="btn btn-secondary btn-lg mb-3"><i class="fas fa-plus-circle me-2"></i>Add Condition</button>
+                                    <div id="actionsContainer">
+                                        <div class="row action-row">
+                                            <div class="col-md-10 mb-3">
+                                                <label class="form-label">Action</label>
+                                                <input type="text" class="form-control form-control-lg action-input" placeholder="Enter action (e.g., 'transfer')" required>
+                                            </div>
+                                            <div class="col-md-2 mb-3 d-flex align-items-end">
+                                                <button type="button" class="btn btn-danger btn-lg remove-action"><i class="fas fa-minus-circle"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="addAction" class="btn btn-secondary btn-lg mb-3"><i class="fas fa-plus-circle me-2"></i>Add Action</button>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="Create a new smart contract"><i class="fas fa-plus-circle me-2"></i>Create Contract</button>
+                                </form>
+                                <hr>
+                                <form id="executeContractForm" class="mt-4">
+                                    <div class="mb-3">
+                                        <label for="contractId" class="form-label">Contract ID</label>
+                                        <input type="text" class="form-control form-control-lg" id="contractId" placeholder="Enter contract ID" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100" data-bs-toggle="tooltip" data-bs-placement="top" title="Execute an existing smart contract"><i class="fas fa-play-circle me-2"></i>Execute Contract</button>
+                                </form>
+                                <hr>
+                                <button id="viewContracts" class="btn btn-primary btn-lg w-100 mt-4" data-bs-toggle="tooltip" data-bs-placement="top" title="View all smart contracts"><i class="fas fa-list me-2"></i>View All Contracts</button>
+                                <div id="contractsResult" class="mt-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="result" class="card mt-4" style="display: none;">
+                    <div class="card-body"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">&copy; 2023 Blockchain Interface. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = 'http://localhost:5000';
+
+        async function fetchAPI(endpoint, method = 'GET', body = null) {
+            showLoading();
+            const options = {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+            };
+            if (body) options.body = JSON.stringify(body);
+            try {
+                const response = await fetch(`${API_URL}${endpoint}`, options);
+                const result = await response.json();
+                showResult(result);
+                return result;
+            } catch (error) {
+                showResult({ error: 'An error occurred. Please try again.' });
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function showLoading() {
+            const resultElement = document.getElementById('result');
+            resultElement.style.display = 'block';
+            resultElement.querySelector('.card-body').innerHTML = '<div class="loading"></div> Processing...';
+        }
+
+        function hideLoading() {
+            const loadingElement = document.querySelector('.loading');
+            if (loadingElement) loadingElement.remove();
+        }
+
+        function showResult(result) {
+            const resultElement = document.getElementById('result');
+            resultElement.style.display = 'block';
+            if (typeof result === 'object') {
+                resultElement.querySelector('.card-body').innerHTML = '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+            } else {
+                resultElement.querySelector('.card-body').textContent = result;
+            }
+            resultElement.style.opacity = 0;
+            setTimeout(() => { resultElement.style.opacity = 1; }, 10);
+        }
+
+        document.getElementById('createWalletForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await fetchAPI('/wallet/new', 'POST');
+        });
+
+        document.getElementById('checkBalanceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const address = document.getElementById('balanceAddress').value;
+            await fetchAPI(`/wallet/balance/${address}`);
+        });
+
+        document.getElementById('transactionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const sender = document.getElementById('sender').value;
+            const recipient = document.getElementById('recipient').value;
+            const amount = document.getElementById('amount').value;
+            await fetchAPI('/transaction/new', 'POST', { sender, recipient, amount });
+        });
+
+        document.getElementById('mineForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const minerAddress = document.getElementById('minerAddress').value;
+            await fetchAPI('/mine', 'POST', { miner_address: minerAddress });
+        });
+
+        document.getElementById('viewBlockchain').addEventListener('click', async () => {
+            await fetchAPI('/chain');
+        });
+
+        document.getElementById('validateBlockchain').addEventListener('click', async () => {
+            await fetchAPI('/chain/valid');
+        });
+
+        document.getElementById('historyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const address = document.getElementById('historyAddress').value;
+            const result = await fetchAPI(`/wallet/history/${address}`);
+            const historyResult = document.getElementById('historyResult');
+            if (result.transactions) {
+                historyResult.innerHTML = '<h3>Transaction History</h3>' +
+                    '<ul class="list-group">' +
+                    result.transactions.map(tx => `
+                        <li class="list-group-item">
+                            <strong>From:</strong> ${tx.sender}<br>
+                            <strong>To:</strong> ${tx.recipient}<br>
+                            <strong>Amount:</strong> ${tx.amount}<br>
+                            <strong>Timestamp:</strong> ${new Date(tx.timestamp * 1000).toLocaleString()}
+                        </li>
+                    `).join('') +
+                    '</ul>';
+            } else {
+                historyResult.innerHTML = '<p>No transactions found for this address.</p>';
+            }
+        });
+
+        // Smart Contract Operations
+        document.getElementById('createContractForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const sender = document.getElementById('contractSender').value;
+            const recipient = document.getElementById('contractRecipient').value;
+            const amount = document.getElementById('contractAmount').value;
+            const conditions = Array.from(document.querySelectorAll('.contractCondition')).map(input => input.value);
+            const actions = Array.from(document.querySelectorAll('.contractAction')).map(input => input.value);
+            const expiration = document.getElementById('contractExpiration').value;
+            await fetchAPI('/smart-contract/new', 'POST', { sender, recipient, amount, conditions, actions, expiration });
+        });
+
+        // Add condition field
+        document.getElementById('addCondition').addEventListener('click', () => {
+            const conditionsContainer = document.getElementById('conditionsContainer');
+            const newCondition = document.createElement('div');
+            newCondition.innerHTML = `
+                <input type="number" class="form-control contractCondition mb-2" placeholder="Enter condition as Unix timestamp" required>
+            `;
+            conditionsContainer.appendChild(newCondition);
+        });
+
+        // Add action field
+        document.getElementById('addAction').addEventListener('click', () => {
+            const actionsContainer = document.getElementById('actionsContainer');
+            const newAction = document.createElement('div');
+            newAction.innerHTML = `
+                <input type="text" class="form-control contractAction mb-2" placeholder="Enter action" required>
+            `;
+            actionsContainer.appendChild(newAction);
+        });
+
+        document.getElementById('executeContractForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const contractId = document.getElementById('contractId').value;
+            await fetchAPI(`/smart-contract/execute/${contractId}`, 'POST');
+        });
+
+        document.getElementById('viewContracts').addEventListener('click', async () => {
+            const result = await fetchAPI('/smart-contracts');
+            const contractsResult = document.getElementById('contractsResult');
+            if (result.smart_contracts && result.smart_contracts.length > 0) {
+                contractsResult.innerHTML = '<h3>Smart Contracts</h3>' +
+                    '<ul class="list-group">' +
+                    result.smart_contracts.map(contract => `
+                        <li class="list-group-item">
+                            <strong>ID:</strong> ${contract.id}<br>
+                            <strong>Sender:</strong> ${contract.sender}<br>
+                            <strong>Recipient:</strong> ${contract.recipient}<br>
+                            <strong>Amount:</strong> ${contract.amount}<br>
+                            <strong>Condition:</strong> ${contract.condition}<br>
+                            <strong>Executed:</strong> ${contract.executed}
+                        </li>
+                    `).join('') +
+                    '</ul>';
+            } else {
+                contractsResult.innerHTML = '<p>No smart contracts found.</p>';
+            }
+        });
+
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    </script>
+</body>
+</html>
